@@ -26,23 +26,32 @@ var paper1Screen;
 var paper2;
 var paper2Screen;
 var paper3;
+var paper3Screen;
 var paper4;
+var paper4Screen;
+var hasChecked1=false;
+var hasChecked2=false;
+var hasChecked3=false;
+var hasChecked4=false;
 
     
 function preload(){
     game.load.image('rock', 'assets/img/rock.png');
-    game.load.spritesheet('hopper', 'assets/img/hopper.png', 17, 39);
-    game.load.spritesheet('ada', 'assets/img/ada.png', 22, 23);
+    //game.load.spritesheet('hopper', 'assets/img/hopper.png', 17, 39);
+    //game.load.spritesheet('ada', 'assets/img/ada.png', 22, 23);
     game.load.image('branch','assets/img/branch.png');
     game.load.image('log', 'assets/img/log.png');
     game.load.image('wood', 'assets/wood.png');
     game.load.image('bridge', 'assets/bridge.png');
     game.load.image('bar', 'assets/bottomBar.png');
-    game.load.image('ground','assets/firstGround.png');
+    game.load.image('ground','assets/secondGround.png');
+    game.load.image('ground2','assets/img/gameGround.png');
     game.load.image('paper','assets/img/page.png');
     game.load.spritesheet('dude', 'assets/hopper.png', 19, 40);
     game.load.image('screen1', 'assets/paper1.png');
     game.load.image('screen2', 'assets/paper1.png');
+    game.load.image('screen3', 'assets/paper1.png');
+    game.load.image('screen4', 'assets/paper1.png');
 }
     
 function create(){
@@ -77,15 +86,25 @@ function create(){
 
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
+    //carrie
+    wood = game.add.group();
+    game.physics.enable(wood);
+    wood.enableBody = true;
     
     for(var i = 0; i < 80; i++){
         if(i%2==0){
-            var plat = platforms.create(0, (i*120)+100, 'ground');
+            var plat = platforms.create(0, (i*120)+600, 'ground');
             plat.body.immovable = true;
+            var plank = wood.create(100, (i*120)+70, 'wood');
+            plank.body.immovable = true;
         }else{
             var plat = platforms.create(700, i*120, 'ground');
-            plat.body.immovable = true;   
+            plat.body.immovable = true; 
+            var plank = wood.create(700, (i*120)-30, 'wood');
+            plank.body.immovable = true;
         }
+        
+        
         
     }
     
@@ -94,10 +113,10 @@ function create(){
     game.world.setBounds(0, 0, 800, 2000);
 
     //beth
-     var bottomGround = platforms.create(0, game.world.height-30, 'ground');
+     var bottomGround = platforms.create(0, game.world.height-30, 'ground2');
     bottomGround.scale.setTo(2,2);
     bottomGround.body.immovable = true;
-    
+    /*
     rocks = game.add.group();
     for (var i = 0; i < 150; i++)
     {
@@ -108,44 +127,30 @@ function create(){
         
     }
     rocks.enableBody = true;
-    //endbeth
+   */ //endbeth
     
-    //carrie
-    wood = game.add.group();
-    game.physics.enable(wood);
-    wood.enableBody = true;
+    
 /*PAPER STUFF*/
     paperG = game.add.group();
     paperG.enableBody = true;
-    paper1 = paperG.create(50,250,'paper');
-    paper2 = paperG.create(100,200, 'paper');
-    paper1Screen = game.add.sprite(0,100,'screen1');
+    paper1 = paperG.create(98,1930,'paper');
+    paper2 = paperG.create(754,1520, 'paper');
+    paper3 = paperG.create(258,1280, 'paper');
+    paper4 = paperG.create(166,800, 'paper');
+    paper1Screen = game.add.sprite(0,0,'screen1');
     paper1Screen.visible = false;
-    paper2Screen = game.add.sprite(20,100,'screen2');
+    paper2Screen = game.add.sprite(0,0,'screen2');
     paper2Screen.visible = false;
-    
-    
-/*DROP WOOD*/
-    for (var i = 0; i < 10; i++)
-    {
-        var plank = wood.create(game.world.randomX, game.world.randomY, 'wood');
+    paper3Screen = game.add.sprite(0,0,'screen3');
+    paper3Screen.visible = false;
+    paper4Screen = game.add.sprite(0,0,'screen4');
+    paper4Screen.visible = false;
         
-        //  Let gravity do its thing
-        plank.body.gravity.y = 300;
-
-        //  This just gives each bottle a slightly random bounce value
-        plank.body.bounce.y = 0.5 + Math.random() * 0.2;
-        plank.body.immovable = true;
-        plank.body.collideWorldBounds = true;
-    }
-    paperG = game.add.group();
-    paperG.enableBody = true;
-    paper1 = paperG.create(50,250,'paper');
-
+    
     /*PLAYER STUFF*/
     
     // The player and its settings
-    player = game.add.sprite(38, 0, 'hopper');
+    player = game.add.sprite(38, 0, 'dude');
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
@@ -167,10 +172,30 @@ function update(){
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(player, fallPlat);
     game.physics.arcade.collide(wood.body,platforms);
-    var paperOver = game.physics.arcade.overlap(player, paperG, display, null, this);
+    var paperOver1 = game.physics.arcade.overlap(player, paper1, display1, null, this);
+    var paperOver2 = game.physics.arcade.overlap(player, paper2, display2, null, this);
+    var paperOver3 = game.physics.arcade.overlap(player, paper3, display3, null, this);
+    var paperOver4 = game.physics.arcade.overlap(player, paper4, display4, null, this);
     game.physics.arcade.overlap(player, wood, collectWood, null, this);
-    if(paperOver == false){
+    if(paperOver1 == false){
         paper1Screen.visible = false;
+    }else{
+    hasChecked1 = true;}
+    
+    if(paperOver2 == false){
+        paper2Screen.visible = false;
+    }else{
+    hasChecked2 = true;}
+    
+    if(paperOver3 == false){
+        paper3Screen.visible = false;
+    }else{
+        hasChecked3 = true;}
+    
+    if(paperOver4 == false){
+        paper4Screen.visible = false;
+    }else{
+        hasChecked4 = true;   
     }
     //make bridge fall
     bridge.y = bar.y-120; 
@@ -204,6 +229,10 @@ function update(){
         game.camera.y=player.y-100;
         
     }
+    if(hasChecked1&&hasChecked2&&hasChecked3&&hasChecked4&&(numPicked>=10)){
+       console.log("winning");
+       }
+       
 }
     
 function collectWood (player, plank) {
@@ -221,10 +250,29 @@ function collectWood (player, plank) {
     //displays end screen
 
 }
-function display(player, paper){
+function display1(player, paper){
     var y = player.y;
     paper1Screen.y=y-60;
     paper1Screen.visible = true;
+    
+}
+    
+function display2(player, paper){
+    var y = player.y;
+    paper2Screen.y=y-60;
+    paper2Screen.visible = true;
+    
+}
+function display3(player, paper){
+    var y = player.y;
+    paper3Screen.y=y-60;
+    paper3Screen.visible = true;
+    
+}
+function display4(player, paper){
+    var y = player.y;
+    paper4Screen.y=y-60;
+    paper4Screen.visible = true;
     
 }
     
