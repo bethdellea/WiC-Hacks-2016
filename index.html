@@ -12,9 +12,12 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
 function preload(){
-    game.load.image('disk', 'assets/disk.png');
-    game.load.image('ground','assets/img/platform.png');
-    game.load.spritesheet('dude', 'assets/img/hopper.png', 17, 39);
+    game.load.image('rock', 'assets/img/rock.png');
+    game.load.image('ground','assets/img/gameGround.png');
+    game.load.spritesheet('hopper', 'assets/img/hopper.png', 17, 39);
+    game.load.spritesheet('dude', 'assets/img/ada.png', 22, 23);
+    game.load.image('branch','assets/img/branch.png');
+    game.load.image('log', 'assets/img/log.png');
 }
     
 function create(){
@@ -26,10 +29,14 @@ function create(){
     platforms.enableBody = true;
 
     // Here we create the ground.
-    var ground = platforms.create(0, game.world.height-60, 'ground'); //game.world.height - 64
-
+    var ground = platforms.create(0, game.world.height-160, 'ground'); //game.world.height - 64
+   
+    var branch = platforms.create(120, 210, 'branch');
     //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    ground.scale.setTo(2, 2);
+    branch.scale.setTo(.65,1);
+    ground.scale.setTo(1, 1);
+    
+    branch.body.immovable = true;
 
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
@@ -37,21 +44,31 @@ function create(){
     //  Make our game world 2000x2000 pixels in size (the default is to match the game size)
     game.world.setBounds(0, 0, 800, 2000);
 
+     var bottomGround = platforms.create(0, game.world.height-30, 'ground');
+    bottomGround.scale.setTo(2,2);
+    bottomGround.body.immovable = true;
+    
+    rocks = game.add.group();
     for (var i = 0; i < 150; i++)
     {
-        game.add.sprite(game.world.randomX, game.world.randomY, 'disk');
+        rock = platforms.create(game.world.randomX, game.world.randomY, 'rock');
+        
+        rock.scale.setTo(.25,.25);
+        
+        
     }
+    rocks.enableBody = true;
     
     /*PLAYER STUFF*/
     
     // The player and its settings
-    player = game.add.sprite(38, 0, 'dude');
+    player = game.add.sprite(38, 0, 'hopper');
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
 
     //  Player physics properties. Give the little guy a slight bounce.
-    player.body.bounce.y = 0.2;
+    player.body.bounce.y = 0.4;
     player.body.gravity.y = 300;
     player.body.collideWorldBounds = true;
 
