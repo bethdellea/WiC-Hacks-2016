@@ -17,6 +17,12 @@ var wood;
 var woods;
 var player;
 var numPicked=0;
+var paperG;
+var paper1;
+var paper1Screen;
+var paper2;
+var paper3;
+var paper4;
 
     
 function preload(){
@@ -24,12 +30,21 @@ function preload(){
     game.load.image('bridge', 'assets/bridge.png');
     game.load.image('bar', 'assets/bottomBar.png');
     game.load.image('ground','assets/firstGround.png');
+    game.load.image('screen', 'assets/img/bgParks.png');
+    game.load.image('paper','assets/paper.png');
     game.load.spritesheet('dude', 'assets/hopper.png', 19, 40);
 }
     
 function create(){
     game.stage.backgroundColor = '#2d2d2d';
     
+    paperG = game.add.group();
+    paperG.enableBody = true;
+    paper1 = paperG.create(50,250,'paper');
+    
+    
+    paper1Screen = game.add.sprite(0,100,'screen');
+    paper1Screen.visible = false;
     
     fallPlat = game.add.group();
     platforms = game.add.group();
@@ -38,6 +53,7 @@ function create(){
     
     platforms.enableBody = true;
     fallPlat.enableBody = true;
+    
 
     // Here we create the ground.
     bridge = fallPlat.create(80, 190, 'bridge');
@@ -94,8 +110,12 @@ function create(){
 function update(){
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(player, fallPlat);
+    game.physics.arcade.overlap(player, paperG, display, null, this);
     game.physics.arcade.overlap(player, wood, collectWood, null, this);
-    
+    if(){
+       console.log("if");
+        paper1Screen.visible = false;
+    }
     //make bridge fall
     bridge.y = bar.y-120;
     
@@ -144,6 +164,13 @@ function collectWood (player, plank) {
     
     //displays end screen
 
+}
+function display(player, paper){
+    console.log("in func");
+    var y = player.y;
+    paper1Screen.y=y;
+    paper1Screen.visible = true;
+    
 }
     
 function render() {
