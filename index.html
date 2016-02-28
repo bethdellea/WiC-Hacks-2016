@@ -47,6 +47,7 @@ function preload(){
     game.load.image('rCliff', 'assets/cliffR.png');
     //game.load.spritesheet('hopper', 'assets/img/hopper.png', 17, 39);
     //game.load.spritesheet('ada', 'assets/img/ada.png', 22, 23);
+    game.load.image('backGround','assets/BACKGROUND.png');
     game.load.image('branchL','assets/img/branch.png');
     game.load.image('branchR', 'assets/branch2.png');
     game.load.image('log', 'assets/img/log.png');
@@ -69,7 +70,7 @@ function create(){
     game.stage.backgroundColor = '#2d2d2d';
     lCliffs = game.add.tileSprite(0,0,300, 2000, 'lCliff');
     rCliffs = game.add.tileSprite(508,0,810, 2000, 'rCliff');
-    
+    backGround = game.add.sprite(0,0,'backGround');
     fallPlat = game.add.group();
     platforms = game.add.group();
     //  We will enable physics for any object that is created in this group
