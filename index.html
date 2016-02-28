@@ -12,6 +12,8 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render});
 
 var bridge;
+var platforms;
+var platArray;
 var bar;
 var wood;
 var woods;
@@ -22,6 +24,7 @@ var paperG;
 var paper1;
 var paper1Screen;
 var paper2;
+var paper2Screen;
 var paper3;
 var paper4;
 
@@ -31,21 +34,14 @@ function preload(){
     game.load.image('bridge', 'assets/bridge.png');
     game.load.image('bar', 'assets/bottomBar.png');
     game.load.image('ground','assets/firstGround.png');
-    game.load.image('screen', 'assets/img/bgParks.png');
-    game.load.image('paper','assets/paper.png');
+    game.load.image('paper','assets/img/page.png');
     game.load.spritesheet('dude', 'assets/hopper.png', 19, 40);
+    game.load.image('screen1', 'assets/paper1.png');
+    game.load.image('screen2', 'assets/paper1.png');
 }
     
 function create(){
     game.stage.backgroundColor = '#2d2d2d';
-    
-    paperG = game.add.group();
-    paperG.enableBody = true;
-    paper1 = paperG.create(50,250,'paper');
-    
-    
-    paper1Screen = game.add.sprite(0,100,'screen');
-    paper1Screen.visible = false;
     
     fallPlat = game.add.group();
     platforms = game.add.group();
@@ -61,13 +57,23 @@ function create(){
     bar = fallPlat.create(80,310,'bar');
     
     game.physics.enable(fallPlat);
-
-
+    game.physics.enable(platforms);
     
     var ground = platforms.create(0, 300, 'ground'); //game.world.height - 64
-
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
+    
+    for(var i = 0; i < 80; i++){
+        if(i%2==0){
+            var plat = platforms.create(0, (i*120)+100, 'ground');
+            plat.body.immovable = true;
+        }else{
+            var plat = platforms.create(700, i*120, 'ground');
+            plat.body.immovable = true;   
+        }
+        
+    }
+    
     
     //  Make our game world 2000x2000 pixels in size (the default is to match the game size)
     game.world.setBounds(0, 0, 800, 2000);
@@ -75,7 +81,18 @@ function create(){
     wood = game.add.group();
     game.physics.enable(wood);
     wood.enableBody = true;
+/*PAPER STUFF*/
+    paperG = game.add.group();
+    paperG.enableBody = true;
+    paper1 = paperG.create(50,250,'paper');
+    paper2 = paperG.create(100,200, 'paper');
+    paper1Screen = game.add.sprite(0,100,'screen1');
+    paper1Screen.visible = false;
+    paper2Screen = game.add.sprite(20,100,'screen2');
+    paper2Screen.visible = false;
     
+    
+/*DROP WOOD*/
     for (var i = 0; i < 10; i++)
     {
         var plank = wood.create(game.world.randomX, game.world.randomY, 'wood');
@@ -88,7 +105,10 @@ function create(){
         plank.body.immovable = true;
         plank.body.collideWorldBounds = true;
     }
-   
+    
+    paperG = game.add.group();
+    paperG.enableBody = true;
+    paper1 = paperG.create(50,250,'paper');
     
     
     /*PLAYER STUFF*/
@@ -115,6 +135,7 @@ function create(){
 function update(){
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(player, fallPlat);
+    console.log(game.physics.arcade.collide(wood,platforms));
     var paperOver = game.physics.arcade.overlap(player, paperG, display, null, this);
     game.physics.arcade.overlap(player, wood, collectWood, null, this);
     if(paperOver == false){
