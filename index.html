@@ -29,11 +29,16 @@ var paper3;
 var paper3Screen;
 var paper4;
 var paper4Screen;
+var adaBack;
+var adaScreen;
 var hasChecked1=false;
 var hasChecked2=false;
 var hasChecked3=false;
 var hasChecked4=false;
 var winning = false;
+var initialJump = false;
+var withAda = false;
+var newBridge;
 
     
 function preload(){
@@ -51,12 +56,13 @@ function preload(){
     game.load.image('ground','assets/secondGround.png');
     game.load.image('ground2','assets/img/gameGround.png');
     game.load.image('paper','assets/img/page.png');
-    game.load.spritesheet('dude', 'assets/hopper.png', 39, 80);
+    game.load.spritesheet('dude', 'assets/hopper.png', 38, 80);
     game.load.spritesheet('ada', 'assets/ada.png', 44, 46);
     game.load.image('screen1', 'assets/paper1.png');
     game.load.image('screen2', 'assets/paper1.png');
     game.load.image('screen3', 'assets/paper1.png');
     game.load.image('screen4', 'assets/paper1.png');
+    game.load.image('adaScreen','assets/adaScreentxt.png');
 }
     
 function create(){
@@ -166,6 +172,7 @@ function create(){
     paper2 = paperG.create(754,1520, 'paper');
     paper3 = paperG.create(258,1280, 'paper');
     paper4 = paperG.create(166,800, 'paper');
+    
     paper1Screen = game.add.sprite(0,0,'screen1');
     paper1Screen.visible = false;
     paper2Screen = game.add.sprite(0,0,'screen2');
@@ -174,6 +181,9 @@ function create(){
     paper3Screen.visible = false;
     paper4Screen = game.add.sprite(0,0,'screen4');
     paper4Screen.visible = false;
+    adaScreen = game.add.sprite(0,0,'adaScreen');
+    adaScreen.visible = false;
+    
         
     
     
@@ -182,7 +192,7 @@ function create(){
     /*PLAYER STUFF*/
     
     // The player and its settings
-    player = game.add.sprite(38, 0, 'dude');
+    player = game.add.sprite(120, 0, 'dude');
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
@@ -201,23 +211,35 @@ function create(){
     bot = game.add.sprite(18, 0, 'ada');
     game.physics.arcade.enable(bot);
     bot.body.bounce.y = 0.4;
-    bot.body.gravity.y = 350;
+    bot.body.gravity.y = 300;
     bot.body.collideWorldBounds = true;
     bot.animations.add('left', [5,6,7,8,9,10], 22, true);
     bot.animations.add('right', [0,1,2,3,4], 22, true);
+    
+    newBridge = game.add.sprite(120, 220,'bridge');
+    game.physics.arcade.enable(newBridge);
+    newBridge.immovable = true;
+    newBridge.visible = false;
     
     
 }
     
 function update(){
-    game.physics.arcade.collide(player, platforms);
+    if(player.y>=1800){
+        initialJump = true;  
+    }
+    if(initialJump){
+    game.physics.arcade.collide(player, platforms);}
     game.physics.arcade.collide(bot, platforms);
     game.physics.arcade.collide(player, fallPlat);
     game.physics.arcade.collide(wood.body,platforms);
+    game.physics.arcade.collide(bot,newBridge);
+    game.physics.arcade.collide(player,newBridge);
     var paperOver1 = game.physics.arcade.overlap(player, paper1, display1, null, this);
     var paperOver2 = game.physics.arcade.overlap(player, paper2, display2, null, this);
     var paperOver3 = game.physics.arcade.overlap(player, paper3, display3, null, this);
     var paperOver4 = game.physics.arcade.overlap(player, paper4, display4, null, this);
+    
     game.physics.arcade.overlap(player, wood, collectWood, null, this);
     if(paperOver1 == false){
         paper1Screen.visible = false;
@@ -238,6 +260,10 @@ function update(){
         paper4Screen.visible = false;
     }else{
         hasChecked4 = true;   
+    }
+    
+    if(withAda == false){
+        adaScreen.visible = false;
     }
     //make bridge fall
     bridge.y = bar.y-120; 
@@ -272,8 +298,16 @@ function update(){
         
     }
     if(hasChecked1&&hasChecked2&&hasChecked3&&hasChecked4&&(numPicked>=10)){
-       console.log("winning");
-        winning = true;
+        withAda = game.physics.arcade.overlap(player, bot, displayAdaScreen, null, this);
+        if(withAda){
+            winning = true;
+            newBridge.visible = true;
+            bot.body.velocity.x = 30;
+            if(bot.body.x>100){
+                newBridge.visible = true;
+                bot.body.velocity.x = 0;
+            }
+        }
        }
        
 }
@@ -295,28 +329,32 @@ function collectWood (player, plank) {
 }
 function display1(player, paper){
     var y = player.y;
-    paper1Screen.y=1420;
+    paper1Screen.y=game.camera.y;
     paper1Screen.visible = true;
     
 }
     
 function display2(player, paper){
     var y = player.y;
-    paper2Screen.y=y-100;
+    paper2Screen.y=game.camera.y;
     paper2Screen.visible = true;
     
 }
 function display3(player, paper){
     var y = player.y;
-    paper3Screen.y=y-100;
+    paper3Screen.y=game.camera.y;
     paper3Screen.visible = true;
     
 }
 function display4(player, paper){
     var y = player.y;
-    paper4Screen.y=y-100;
+    paper4Screen.y=game.camera.y;
     paper4Screen.visible = true;
     
+}
+function displayAdaScreen(player, ada){
+    adaScreen.y = game.camera.y;
+    adaScreen.visible = true;
 }
     
 function render() {
