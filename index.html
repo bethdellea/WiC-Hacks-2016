@@ -13,10 +13,14 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 
 var bridge;
 var bar;
+var wood;
+var woods;
 var player;
+var numPicked=0;
+
     
 function preload(){
-    game.load.image('disk', 'assets/img/syrup.png');
+    game.load.image('wood', 'assets/wood.png');
     game.load.image('bridge', 'assets/bridge.png');
     game.load.image('bar', 'assets/bottomBar.png');
     game.load.image('ground','assets/firstGround.png');
@@ -26,9 +30,12 @@ function preload(){
 function create(){
     game.stage.backgroundColor = '#2d2d2d';
     
+    
     fallPlat = game.add.group();
     platforms = game.add.group();
     //  We will enable physics for any object that is created in this group
+    
+    
     platforms.enableBody = true;
     fallPlat.enableBody = true;
 
@@ -40,14 +47,28 @@ function create(){
 
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
-
+    
     //  Make our game world 2000x2000 pixels in size (the default is to match the game size)
     game.world.setBounds(0, 0, 800, 2000);
-
-    for (var i = 0; i < 150; i++)
+    
+    wood = game.add.group();
+    game.physics.enable(wood);
+    wood.enableBody = true;
+    
+    for (var i = 0; i < 10; i++)
     {
-        game.add.sprite(game.world.randomX, game.world.randomY, 'disk');
+        var plank = wood.create(game.world.randomX, game.world.randomY, 'wood');
+        
+        //  Let gravity do its thing
+        plank.body.gravity.y = 300;
+
+        //  This just gives each bottle a slightly random bounce value
+        plank.body.bounce.y = 0.5 + Math.random() * 0.2;
+        plank.body.immovable = true;
+        plank.body.collideWorldBounds = true;
     }
+   
+    
     
     /*PLAYER STUFF*/
     
@@ -73,6 +94,7 @@ function create(){
 function update(){
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(player, fallPlat);
+    game.physics.arcade.overlap(player, wood, collectWood, null, this);
     
     //make bridge fall
     bridge.y = bar.y-120;
@@ -106,6 +128,22 @@ function update(){
         game.camera.y=player.y-100;
         
     }
+}
+    
+function collectWood (player, plank) {
+    
+    // Removes the wood from the screen
+    plank.kill();
+
+    //  Add and update the score
+    numPicked += 1;
+    console.log(numPicked);
+    /*for (var i = 0; i < numPicked; i++){
+        var myWood = woods.create(i*10, 20, 'wood');   
+    }*/
+    
+    //displays end screen
+
 }
     
 function render() {
