@@ -39,6 +39,8 @@ var winning = false;
 var initialJump = false;
 var withAda = false;
 var newBridge;
+var tempWAda;
+var newBrG;
 
     
 function preload(){
@@ -59,10 +61,10 @@ function preload(){
     game.load.image('paper','assets/img/page.png');
     game.load.spritesheet('dude', 'assets/hopper.png', 38, 80);
     game.load.spritesheet('ada', 'assets/ada.png', 44, 46);
-    game.load.image('screen1', 'assets/paper1.png');
-    game.load.image('screen2', 'assets/paper1.png');
-    game.load.image('screen3', 'assets/paper1.png');
-    game.load.image('screen4', 'assets/paper1.png');
+    game.load.image('screen1', 'assets/declaration.png');
+    game.load.image('screen2', 'assets/assignment.png');
+    game.load.image('screen3', 'assets/comparison.png');
+    game.load.image('screen4', 'assets/iteration.png');
     game.load.image('adaScreen','assets/adaScreentxt.png');
 }
     
@@ -185,7 +187,8 @@ function create(){
     adaScreen = game.add.sprite(0,0,'adaScreen');
     adaScreen.visible = false;
     
-        
+    newBrG = game.add.group();
+    newBrG.enableBody = true;
     
     
     cursors = game.input.keyboard.createCursorKeys();   
@@ -206,7 +209,7 @@ function create(){
     //  Our two animations, walking left and right.
     player.animations.add('left', [2, 3], 10, true);
     player.animations.add('right', [4, 5], 10, true);
-    player.animations.add('jump', [0,6], 10, true);
+    player.animations.add('jump', [0,1,2,3,4,5,6,7], 10, true);
 
     /* ADA STUFF */
     bot = game.add.sprite(18, 0, 'ada');
@@ -217,10 +220,14 @@ function create(){
     bot.animations.add('left', [5,6,7,8,9,10], 22, true);
     bot.animations.add('right', [0,1,2,3,4], 22, true);
     
-    newBridge = game.add.sprite(120, 220,'bridge');
-    game.physics.arcade.enable(newBridge);
-    newBridge.immovable = true;
-    newBridge.visible = false;
+    newBridge = newBrG.create(120, 220,'bridge');
+    //game.physics.arcade.enable(newBridge);
+    newBridge.body.immovable = true;
+    //newBridge.visible = false;
+    newBar = newBrG.create(120,350,'bar');
+    newBar.body.immovable = true;
+    //newBar.visible = false;
+    newBrG.visible = false;
     
     
 }
@@ -230,18 +237,21 @@ function update(){
         initialJump = true;  
     }
     if(initialJump){
-    game.physics.arcade.collide(player, platforms);}
-    game.physics.arcade.collide(bot, platforms);
-    game.physics.arcade.collide(player, fallPlat);
+    game.physics.arcade.collide(player, platforms);
+    
     game.physics.arcade.collide(wood.body,platforms);
-    game.physics.arcade.collide(bot,newBridge);
-    game.physics.arcade.collide(player,newBridge);
+    //game.physics.arcade.collide(bot,newBridge);
+    //game.physics.arcade.collide(player,newBridge);
     var paperOver1 = game.physics.arcade.overlap(player, paper1, display1, null, this);
     var paperOver2 = game.physics.arcade.overlap(player, paper2, display2, null, this);
     var paperOver3 = game.physics.arcade.overlap(player, paper3, display3, null, this);
     var paperOver4 = game.physics.arcade.overlap(player, paper4, display4, null, this);
     
     game.physics.arcade.overlap(player, wood, collectWood, null, this);
+        }
+    
+    game.physics.arcade.collide(player, fallPlat);
+    game.physics.arcade.collide(bot, platforms);
     if(paperOver1 == false){
         paper1Screen.visible = false;
     }else{
@@ -263,30 +273,31 @@ function update(){
         hasChecked4 = true;   
     }
     
-    if(withAda == false){
+    if(tempWAda == false){
         adaScreen.visible = false;
     }
     //make bridge fall
     bridge.y = bar.y-120; 
     
-     if (cursors.up.isDown && player.body.touching.down)
+    
+     if (cursors.up.isDown)
     {
-        player.body.velocity.y = 1000;
+        player.animations.play('jump',10,true);
+        player.body.velocity.y = -200;
         game.camera.y=player.y-100;
-        player.animations.play('jump');
     }
 
     if (cursors.left.isDown)
     {
         //game.camera.x -= 4;
-        player.animations.play('left');
+        player.animations.play('left',10,true);
         player.x -= 4;
         game.camera.y=player.y-100;
     }
     else if (cursors.right.isDown)
     {
         //game.camera.x += 4;
-        player.animations.play('right');
+        player.animations.play('right',10,true);
         player.x += 4;
         game.camera.y=player.y-100;
     }else
@@ -299,14 +310,21 @@ function update(){
         
     }
     if(hasChecked1&&hasChecked2&&hasChecked3&&hasChecked4&&(numPicked>=10)){
-        withAda = game.physics.arcade.overlap(player, bot, displayAdaScreen, null, this);
+        tempWAda = game.physics.arcade.overlap(player, bot, displayAdaScreen, null, this);
+        if(tempWAda){
+            withAda=true;   
+        }
         if(withAda){
             winning = true;
-            newBridge.visible = true;
             bot.body.velocity.x = 30;
-            if(bot.body.x>100){
-                newBridge.visible = true;
-                bot.body.velocity.x = 0;
+            if(bot.body.x>90){
+                game.physics.enable(newBrG);
+                newBrG.visible = true;
+                newBridge.body.immovable = true;
+                bot.body.velocity.x = 60;
+                newBar.body.immovable = true;
+                game.physics.arcade.collide(bot,newBar);
+                game.physics.arcade.collide(player,newBar);
             }
         }
        }
