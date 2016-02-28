@@ -1,0 +1,82 @@
+//Goes in Create:
+//calls function makePlanks
+makePlanks(player.height,game.world.height);
+
+
+
+
+//Goes in Update:
+//calls function climbLadder
+climbLadder();
+
+
+
+
+//Outside function
+//function that creates the ladder; paramaters are the height of the player sprite and the height of the screen
+function makePlanks(playerHeight,worldHeight){
+    
+    //the initial height the character has to jump to get to the first rung from the ground
+    jumpingHeight = worldHeight - 64;    
+    
+    //Ladder Rungs
+    plank1 = game.add.sprite(300,480,'plank');
+    plank1.scale.setTo(1.75, .25);
+    plank2 = game.add.sprite(300,415,'plank');
+    plank2.scale.setTo(1.75, .25);
+    plank3 = game.add.sprite(300,350,'plank');
+    plank3.scale.setTo(1.75, .25);
+    plank4 = game.add.sprite(300,285,'plank');
+    plank4.scale.setTo(1.75, .25);
+    
+    //enables physics for the planks
+    game.physics.arcade.enable(plank1);
+    game.physics.arcade.enable(plank2);
+    game.physics.arcade.enable(plank3);
+    game.physics.arcade.enable(plank4);
+
+    //make rungs immovable
+    plank1.body.immovable = true;
+    plank2.body.immovable = true;
+    plank3.body.immovable = true;
+    plank4.body.immovable = true;
+        
+    //handles how much higher the player must go to get to the next rung
+    rungHeight = playerHeight + plank1.height+15;
+    
+    //helps handle whether or not you can jump to the next rung or not
+    var theJump = false;
+
+    }
+    
+    
+    
+
+//Outside function
+    
+//handles how the player jumps from rung to rung on the ladder    
+function climbLadder(){
+    
+    //the player jumps above a rung and then lands on it on their way down
+    //the next rung isn't able to be jumped onto until the previous rung has been hit
+    if(player.body.y<=jumpingHeight-rungHeight){
+        game.physics.arcade.collide(plank1,player);
+        theJump = true;   
+        }
+     if((player.body.y<=jumpingHeight-(2*rungHeight))&&(theJump == true)){
+         game.physics.arcade.collide(plank2,player);
+         theJump = false;
+        }
+    
+     if((player.body.y<=jumpingHeight-(3*rungHeight))&&(theJump == false)){
+         game.physics.arcade.collide(plank3,player);
+         theJump = true;
+        }
+    
+     if((player.body.y<=jumpingHeight-(4*rungHeight))&&(theJump == true)){
+         game.physics.arcade.collide(plank4,player);
+            
+        }
+    }
+    
+    
