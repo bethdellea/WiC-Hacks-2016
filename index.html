@@ -15,6 +15,7 @@ var bridge;
 var bar;
 var wood;
 var woods;
+var fallPlat;
 var player;
 var numPicked=0;
 var paperG;
@@ -58,8 +59,12 @@ function create(){
     // Here we create the ground.
     bridge = fallPlat.create(80, 190, 'bridge');
     bar = fallPlat.create(80,310,'bar');
-    var ground = platforms.create(0, 300, 'ground'); //game.world.height - 64
     
+    game.physics.enable(fallPlat);
+
+
+    
+    var ground = platforms.create(0, 300, 'ground'); //game.world.height - 64
 
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
@@ -110,14 +115,13 @@ function create(){
 function update(){
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(player, fallPlat);
-    game.physics.arcade.overlap(player, paperG, display, null, this);
+    var paperOver = game.physics.arcade.overlap(player, paperG, display, null, this);
     game.physics.arcade.overlap(player, wood, collectWood, null, this);
-    if(){
-       console.log("if");
+    if(paperOver == false){
         paper1Screen.visible = false;
     }
     //make bridge fall
-    bridge.y = bar.y-120;
+    bridge.y = bar.y-120; 
     
      if (cursors.up.isDown && player.body.touching.down)
     {
@@ -166,7 +170,6 @@ function collectWood (player, plank) {
 
 }
 function display(player, paper){
-    console.log("in func");
     var y = player.y;
     paper1Screen.y=y;
     paper1Screen.visible = true;
