@@ -135,7 +135,7 @@ function create(){
 function update(){
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(player, fallPlat);
-    console.log(game.physics.arcade.collide(wood,platforms));
+    game.physics.arcade.collide(wood.body,platforms);
     var paperOver = game.physics.arcade.overlap(player, paperG, display, null, this);
     game.physics.arcade.overlap(player, wood, collectWood, null, this);
     if(paperOver == false){
