@@ -51,8 +51,8 @@ function preload(){
     game.load.image('ground','assets/secondGround.png');
     game.load.image('ground2','assets/img/gameGround.png');
     game.load.image('paper','assets/img/page.png');
-    game.load.spritesheet('dude', 'assets/hopper.png', 19, 40);
-    game.load.spritesheet('ada', 'assets/ada.png', 22, 23);
+    game.load.spritesheet('dude', 'assets/hopper.png', 39, 80);
+    game.load.spritesheet('ada', 'assets/ada.png', 44, 46);
     game.load.image('screen1', 'assets/paper1.png');
     game.load.image('screen2', 'assets/paper1.png');
     game.load.image('screen3', 'assets/paper1.png');
@@ -115,7 +115,7 @@ function create(){
             }
             var plat = platforms.create(0 + moveX, (i*120)+600 + moveY, objName);
             plat.body.immovable = true;
-            var plank = wood.create(100 + moveX, (i*120)+70 + moveY, 'wood');
+            var plank = wood.create(100 + moveX, (i*120)+90 + moveY, 'wood');
             
             plank.body.immovable = true;
         }else{
@@ -128,7 +128,7 @@ function create(){
         }
             var plat = platforms.create(700 + moveX, i*120 + moveY, objName);
             plat.body.immovable = true; 
-            var plank = wood.create(700 + moveX, (i*120)-30 + moveY, 'wood');
+            var plank = wood.create(700 + moveX, (i*120)-100 + moveY, 'wood');
            
             plank.body.immovable = true;
         }
